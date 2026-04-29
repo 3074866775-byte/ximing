@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>熹茗茶业 · 朱子后人 制茶世家 | 智能AI茶艺顾问</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+            background-color: #faf8f4;
+            color: #2c2b28;
+            line-height: 1.5;
+        }
+
+        /* 主布局容器 */
+        .app {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: #ffffff;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.03);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.3s ease;
+        }
+
+        /* 导航栏区域 - 增加粘性 + 滚动透明效果 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5rem;
+            border-bottom: 1px solid #eae6df;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(4px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.2s ease;
+        }
+        .navbar.scrolled {
+            padding: 0.6rem 5rem;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .logo-area:hover {
+            opacity: 0.85;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #3b2e24;
+            border-left: 1px solid #ddd6cc;
+            padding-left: 0.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9rem;
+            color: #4a3e32;
+            font-weight: 500;
+        }
+
+        .nav-links span {
+            cursor: default;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .nav-links span:hover {
+            color: #8b6946;
+            transform: translateY(-1px);
+        }
+        .nav-links span::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: #8b6946;
+            transition: width 0.2s ease;
+        }
+        .nav-links span:hover::after {
+            width: 100%;
+        }
+
+        /* Hero区域 */
+        .hero {
+            display: flex;
+            align-items: center;
+            padding: 3rem 5rem 4rem 5rem;
+            background: linear-gradient(100deg, #ffffff 0%, #fcf9f4 100%);
+            gap: 4rem;
+        }
+
+        .hero-left {
+            flex: 1;
+            transition: transform 0.2s;
+        }
+        .hero-left:hover {
+            transform: translateX(4px);
+        }
+
+        .hero-tag {
+            display: inline-block;
+            background: #ecf0e7;
+            color: #557c3f;
+            padding: 0.2rem 1rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+            transition: all 0.2s;
+        }
+        .hero-tag:hover {
+            background: #dce4d0;
+            transform: scale(1.02);
+        }
+
+        .hero-left h1 {
+            font-size: 3.2rem;
+            font-weight: 600;
+            line-height: 1.25;
+            color: #2b4124;
+            margin-bottom: 1rem;
+        }
+
+        .hero-left p {
+            font-size: 1rem;
+            color: #5f5548;
+            max-width: 90%;
+            margin-bottom: 2rem;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .stat-item {
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+        .stat-item:hover {
+            transform: translateY(-4px);
+        }
+        .stat-item h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2b4124;
+        }
+        .stat-item p {
+            font-size: 0.75rem;
+            color: #7f6e5c;
+        }
+
+        .hero-right {
+            flex: 0.9;
+            background: #ebe4d9;
+            height: 380px;
+            border-radius: 20px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600"><rect width="800" height="600" fill="%23e2d8cc" /><circle cx="180" cy="200" r="60" fill="%23c4b6a4" opacity="0.5"/><path d="M520 300 L580 200 L640 300 Z" fill="%2394826b" opacity="0.4" /><path d="M400 450 L450 380 L500 450 Z" fill="%238a765c" opacity="0.6" /></svg>');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .hero-right:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+        }
+        .hero-right::after {
+            content: "岩骨花香 · 朱子家业";
+            position: absolute;
+            bottom: 20px;
+            right: 24px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            color: white;
+            transition: background 0.2s;
+        }
+        .hero-right:hover::after {
+            background: rgba(0,0,0,0.65);
+        }
+
+        /* 核心双栏区域 */
+        .dashboard {
+            display: flex;
+            padding: 3rem 5rem;
+            gap: 3rem;
+            border-top: 1px solid #f0ede8;
+        }
+
+        /* 左侧知识图谱卡片 */
+        .knowledge-panel {
+            flex: 1.2;
+            background: #fefefc;
+            border-radius: 28px;
+            border: 1px solid #f0eae2;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02);
+            padding: 1.8rem 1.5rem;
+            height: fit-content;
+            transition: all 0.3s ease;
+        }
+        .knowledge-panel:hover {
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #3a2d22;
+            border-left: 3px solid #b28d5c;
+            padding-left: 1rem;
+        }
+
+        .knowledge-category {
+            margin-bottom: 1.4rem;
+        }
+
+        .category-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #8b6946;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+        }
+
+        .items-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .node-item {
+            background: #f3efe9;
+            border-radius: 60px;
+            padding: 0.4rem 1rem;
+            font-size: 0.75rem;
+            color: #4f3f30;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid #e7dfd6;
+            cursor: default;
+        }
+        .node-item:hover {
+            background: #e7ddd1;
+            transform: scale(1.02) translateY(-2px);
+            color: #2c4924;
+            border-color: #b28d5c;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        /* 右侧AI聊天卡片 */
+        .ai-chat-card {
+            flex: 2.2;
+            background: #ffffff;
+            border-radius: 28px;
+            border: 1px solid #ebebdf;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.04);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 620px;
+            transition: all 0.3s ease;
+        }
+        .ai-chat-card:hover {
+            box-shadow: 0 24px 36px -12px rgba(0, 0, 0, 0.08);
+        }
+
+        .chat-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #f0ede8;
+            background: #ffffff;
+        }
+        .chat-header h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #2e281f;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: #fefcf9;
+        }
+
+        .message {
+            display: flex;
+            max-width: 85%;
+            animation: fadeMsg 0.2s ease;
+            transition: transform 0.15s ease;
+        }
+        .message:hover {
+            transform: translateX(4px);
+        }
+
+        .user-message {
+            align-self: flex-end;
+        }
+
+        .assistant-message {
+            align-self: flex-start;
+        }
+
+        .bubble {
+            padding: 0.75rem 1.2rem;
+            border-radius: 1.8rem;
+            font-size: 0.9rem;
+            line-height: 1.45;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s;
+        }
+        .user-message .bubble {
+            background: #2b4124;
+            color: white;
+            border-bottom-right-radius: 0.2rem;
+        }
+        .assistant-message .bubble {
+            background: #f1efe8;
+            color: #30261c;
+            border-bottom-left-radius: 0.2rem;
+        }
+        .assistant-message .bubble:hover {
+            background: #eae5db;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: #e5ddcf;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
+        .avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .input-area {
+            border-top: 1px solid #ece6df;
+            padding: 1rem;
+            background: white;
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        #userInput {
+            flex: 1;
+            border: 1px solid #ddd2c4;
+            border-radius: 40px;
+            padding: 0.8rem 1.2rem;
+            font-size: 0.9rem;
+            outline: none;
+            font-family: inherit;
+            background: #ffffff;
+            transition: all 0.2s ease;
+        }
+        #userInput:focus {
+            border-color: #b28d5c;
+            box-shadow: 0 0 0 2px rgba(178, 141, 92, 0.2);
+            transform: scale(1.01);
+        }
+
+        button {
+            background: #3d5e33;
+            border: none;
+            padding: 0 1.6rem;
+            border-radius: 30px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+        button:hover {
+            background: #2c4924;
+            transform: scale(1.02);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 0.6rem;
+            padding: 0.6rem 1rem 0.8rem 1rem;
+            flex-wrap: wrap;
+            background: #ffffff;
+            border-top: 1px solid #f3f0ea;
+        }
+
+        .quick-btn {
+            background: #f5f2ed;
+            border: none;
+            border-radius: 60px;
+            font-size: 0.7rem;
+            padding: 0.3rem 1rem;
+            color: #6f5640;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .quick-btn:hover {
+            background: #e5dcd0;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .quick-btn:active {
+            transform: translateY(1px);
+        }
+
+        .footer {
+            background: #faf7f2;
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.7rem;
+            color: #887a6a;
+            border-top: 1px solid #eae3db;
+            transition: background 0.2s;
+        }
+        .footer:hover {
+            background: #f5f0ea;
+        }
+
+        @keyframes fadeMsg {
+            from { opacity: 0; transform: translateY(6px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        @media (max-width: 1024px) {
+            .navbar, .hero, .dashboard { padding: 1rem 2rem; }
+            .hero { flex-direction: column; }
+            .dashboard { flex-direction: column; }
+            .hero-left h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="navbar" id="navbar">
+        <div class="logo-area">
+            <div class="logo-icon">🍃</div>
+            <div class="logo-text">熹茗茶业</div>
+        </div>
+        <div class="nav-links">
+            <span>熹茗·源启</span>
+            <span>儒系茶品</span>
+            <span>智能茶叙</span>
+            <span>熹茗学堂</span>
+            <span>加盟｜400-881-1977</span>
+        </div>
+    </div>
+
+    <div class="hero">
+        <div class="hero-left">
+            <div class="hero-tag">朱子后人 制茶世家 · 百年规划</div>
+            <h1>熹茗·AI茶业<br>智慧服务新范式</h1>
+            <p>融合熹茗“正心·修身·成人·达己”的文化根系，以RAG增强检索、智能问答引擎打造专属于熹茗加盟商与茶友的知识中台。</p>
+            <div class="hero-stats">
+                <div class="stat-item"><h3>12000㎡</h3><p>武夷山岩茶基地</p></div>
+                <div class="stat-item"><h3>11000㎡</h3><p>智能化仓配中心</p></div>
+                <div class="stat-item"><h3>63000㎡</h3><p>白茶综合产业园</p></div>
+            </div>
+        </div>
+        <div class="hero-right"></div>
+    </div>
+
+    <div class="dashboard">
+        <div class="knowledge-panel">
+            <div class="section-title">
+                熹茗·知识中枢 
+                <span style="font-size: 0.7rem; font-weight: normal;">(RAG 检索增强)</span>
+            </div>
+            <div class="knowledge-category">
+                <div class="category-name">🍃 岩茶·武夷正岩</div>
+                <div class="items-cloud">
+                    <span class="node-item">九龙窠肉桂</span>
+                    <span class="node-item">老枞水仙</span>
+                    <span class="node-item">马头岩肉桂</span>
+                    <span class="node-item">正岩大红袍</span>
+                    <span class="node-item">白鸡冠</span>
+                </div>
+            </div>
+            <div class="knowledge-category">
+                <div class="category-name">🍵 白茶·太姥山韵</div>
+                <div class="items-cloud">
+                    <span class="node-item">白毫银针</span>
+                    <span class="node-item">磻山雪芽</span>
+                    <span class="node-item">寿眉饼干茶</span>
+                    <span class="node-item">老白茶收藏级</span>
+                </div>
+            </div>
+            <div class="knowledge-category">
+                <div class="category-name">🍂 红茶·武夷烟熏</div>
+                <div class="items-cloud">
+                    <span class="node-item">正山小种</span>
+                    <span class="node-item">金骏眉</span>
+                    <span class="node-item">赤凝香</span>
+                </div>
+            </div>
+            <div class="knowledge-category">
+                <div class="category-name">✨ 冲泡 & 茶礼</div>
+                <div class="items-cloud">
+                    <span class="node-item">沸水高冲·岩茶</span>
+                    <span class="node-item">90°C白茶慢沁</span>
+                    <span class="node-item">中秋红冠礼盒</span>
+                    <span class="node-item">儒系古书茶叶礼</span>
+                </div>
+            </div>
+            <div class="knowledge-category">
+                <div class="category-name">📌 售后·加盟政策</div>
+                <div class="items-cloud">
+                    <span class="node-item">七天无理由</span>
+                    <span class="node-item">破损包赔</span>
+                    <span class="node-item">茶样试喝服务</span>
+                    <span class="node-item">AI督导 话术库</span>
+                </div>
+            </div>
+            <div style="margin-top: 1rem; font-size: 0.65rem; color: #a8967f;">✔ 基于熹茗飞书文档+销售话术+RAG技术  准确率验证  |  智能质检保障合规</div>
+        </div>
+
+        <div class="ai-chat-card">
+            <div class="chat-header">
+                <h3>🍃 AI茶艺顾问 · 熹茗智能体</h3>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message assistant-message">
+                    <div class="avatar">🍃</div>
+                    <div class="bubble">敬启茶友：“熹”为光明，亦取意朱子家学。我是熹茗智能茶顾问，可为您推荐岩茶、白茶、红茶、冲泡指南以及售后政策。请问今天想了解哪一款茶？</div>
+                </div>
+            </div>
+            <div class="quick-actions">
+                <button class="quick-btn" data-question="熹茗高端大红袍推荐">✨ 高端岩茶·大红袍</button>
+                <button class="quick-btn" data-question="肉桂冲泡参数?沸水多少">🍂 肉桂冲泡指南</button>
+                <button class="quick-btn" data-question="白茶闷泡还是盖碗好？">🍵 白茶冲泡技巧</button>
+                <button class="quick-btn" data-question="礼盒团购售后">🎁 售后/团购政策</button>
+            </div>
+            <div class="input-area">
+                <input type="text" id="userInput" placeholder="输入您的茶饮问题，例：武夷山正岩肉桂茶叶口感如何？" autocomplete="off">
+                <button id="sendBtn">咨询顾问</button>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        熹茗茶业集团有限公司 · 武夷山正岩核心产区 | AI全渠道赋能中台  |  加盟热线 400-881-1977  |  闽ICP备2024067582号
+    </div>
+</div>
+
+<script>
+    // 熹茗 RAG 知识库（模拟检索，可替换为真实向量数据库 + LLM 接口）
+    const teaKnowledge = [
+        { tag: "大红袍", keywords: ["大红袍", "正岩大红袍", "高端大红袍", "岩韵大红袍"], answer: "🍃 熹茗『正岩大红袍』核心产区牛栏坑周边，古法炭焙，兰底悠长。汤色橙红明亮。礼盒装提供茶样试喝，送人自饮皆宜。加盟商可直接后台批量采购。" },
+        { tag: "肉桂", keywords: ["肉桂", "马头岩肉桂","肉桂口感","正岩肉桂"], answer: "🍂 马头岩肉桂（江湖称‘马肉’）——桂皮香直冲，花果香饱满。建议沸水高冲，快速出汤，感受山场霸气。" },
+        { tag: "老枞水仙", keywords: ["老枞水仙","水仙","枞味"], answer: "🌱 熹茗『老枞水仙』树龄60年以上，木质枞香明显，喉韵清凉感。适宜紫砂壶闷泡，第六泡后显粽叶甜。" },
+        { tag: "白毫银针", keywords: ["白毫银针", "白茶推荐", "磻山雪芽"], answer: "🍃 熹茗『磻山雪芽』头采银针，毫如银雪，鲜爽醇和。建议90℃盖碗冲泡，三泡后蜜韵渐出。" },
+        { tag: "岩茶冲泡", keywords: ["岩茶冲泡", "肉桂冲泡", "怎么冲岩茶", "沸水"], answer: "🍵 岩茶冲泡要点：100℃沸水高冲，前三泡迅速出汤。4泡后每泡适当延长5秒。可使用盖碗或紫砂壶，以激发花果香。" },
+        { tag: "白茶冲泡", keywords: ["白茶怎么泡","白毫银针水温","白茶盖碗"], answer: "🍃 白茶冲泡口诀：水温90°C 沿杯壁柔注水，首泡20秒左右出汤。寿眉可煮饮，银针不宜久焖。" },
+        { tag: "红茶", keywords: ["正山小种","金骏眉","红茶推荐"], answer: "🔥 熹茗『正山小种』传统松针熏焙工艺，桂圆汤甜润；金骏眉（武夷桐木关）花蜜香清。95℃水快出汤，适配秋冬暖饮。" },
+        { tag: "售后", keywords: ["碎茶","破损","售后理赔","退换"], answer: "📦 熹茗承诺‘破损包赔’&7天无理由退换（不影响二次销售）。提供照片，客服14小时内完成补发或退款。" },
+        { tag: "茶礼", keywords: ["礼盒","中秋","送人","团购"], answer: "🎁 熹茗『红冠中秋』礼盒，集成正岩肉桂+白毫银针，宋代书型包装；团购定制联系专属加盟热线 400-881-1977。" }
+    ];
+
+    function retrieveAnswer(question) {
+        const q = question.toLowerCase();
+        let best = null;
+        let maxScore = 0;
+        for (let item of teaKnowledge) {
+            let score = 0;
+            for (let kw of item.keywords) {
+                if (q.includes(kw.toLowerCase())) score += kw.length;
+            }
+            if (score > maxScore) {
+                maxScore = score;
+                best = item.answer;
+            }
+        }
+        if (best) return best + "（数据源自熹茗茶叶知识库·RAG智能检索）";
+        return "🍃 感谢咨询熹茗茶业！您询问的细节非常专业，我将在茶学知识库中检索更多信息。您可以提问题如：大红袍口感？正山小种怎么泡？售后碎茶处理？或拨打加盟客服 4008811977 获取深度解答。";
+    }
+
+    const messagesDiv = document.getElementById('chatMessages');
+    const inputEl = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+
+    function addMessage(role, text) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `message ${role === 'user' ? 'user-message' : 'assistant-message'}`;
+        if (role === 'assistant') {
+            const avatarDiv = document.createElement('div');
+            avatarDiv.className = 'avatar';
+            avatarDiv.innerText = '🍃';
+            msgDiv.appendChild(avatarDiv);
+        }
+        const bubbleDiv = document.createElement('div');
+        bubbleDiv.className = 'bubble';
+        bubbleDiv.innerText = text;
+        msgDiv.appendChild(bubbleDiv);
+        messagesDiv.appendChild(msgDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    async function handleUserQuery() {
+        const userText = inputEl.value.trim();
+        if (!userText) return;
+        addMessage('user', userText);
+        inputEl.value = '';
+        const answer = retrieveAnswer(userText);
+        addMessage('assistant', answer);
+    }
+
+    sendBtn.addEventListener('click', handleUserQuery);
+    inputEl.addEventListener('keypress', (e) => { if (e.key === 'Enter') handleUserQuery(); });
+    document.querySelectorAll('.quick-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            inputEl.value = btn.getAttribute('data-question');
+            handleUserQuery();
+        });
+    });
+
+    // 滚动时导航栏样式变化（增强交互）
+    window.addEventListener('scroll', () => {
+        const navbar = document.getElementById('navbar');
+        if (window.scrollY > 20) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
+</script>
+</body>
+</html>
